@@ -30,6 +30,10 @@ impl Display for Expr {
 #[derive(Clone, Debug, Trace, Finalize, PartialEq)]
 /// A Javascript Expression
 pub enum ExprDef {
+    /// Just the binary operator
+    BOp(BinOp),
+    /// A list of expressions to evaluate
+    OpEval(Vec<Expr>),
     /// Run a operation between 2 expressions
     BinOp(BinOp, Box<Expr>, Box<Expr>),
     /// Run an operation on a value
@@ -115,6 +119,9 @@ impl Operator for ExprDef {
 impl Display for ExprDef {
     fn fmt(&self, f: &mut Formatter) -> Result {
         match *self {
+            ExprDef::BOp(ref op) => write!(f, "{}", op),
+            // TODO: adequate format
+            ExprDef::OpEval(_) => write!(f, "OpEval"),
             ExprDef::Const(ref c) => write!(f, "{}", c),
             ExprDef::Block(ref block) => {
                 write!(f, "{{")?;
