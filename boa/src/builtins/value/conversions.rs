@@ -227,3 +227,24 @@ where
         }
     }
 }
+
+impl TryFrom<ObjectData> for Value {
+    type Error = ();
+    fn try_from(value: ObjectData) -> Result<Self, Self::Error> {
+        match value {
+            ObjectData::Array => Err(()),
+            ObjectData::Map(_) => Err(()),
+            ObjectData::RegExp(_) => Err(()),
+            ObjectData::BigInt(ref value) => Ok(Value::BigInt(value.clone())),
+            ObjectData::Boolean(ref value) => Ok(Value::Boolean(value.clone())),
+            ObjectData::Function(_) => Err(()),
+            ObjectData::String(ref value) => Ok(Value::String(value.clone())),
+            ObjectData::Number(ref value) => Ok(Value::Rational(value.clone())),
+            ObjectData::Symbol(ref value) => Ok(Value::Symbol(value.clone())),
+            ObjectData::Error => Err(()),
+            ObjectData::Ordinary => Err(()),
+            ObjectData::Date(ref value) => Ok(Value::Date(value.clone())),
+            ObjectData::Global => Err(()),
+        }
+    }
+}

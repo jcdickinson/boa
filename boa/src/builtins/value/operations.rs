@@ -382,9 +382,16 @@ impl Value {
     }
 
     #[inline]
-    pub fn neg(&self, _: &mut Interpreter) -> ResultValue {
+    pub fn neg(&self, interpreter: &mut Interpreter) -> ResultValue {
         Ok(match *self {
-            Self::Object(_) | Self::Symbol(_) | Self::Undefined => Self::rational(NAN),
+            Self::Symbol(_) | Self::Undefined => Self::rational(NAN),
+            Self::Object(ref obj) => {
+                if let Ok(value) = Value::try_from(obj.borrow().data.clone()) {
+                    return value.neg(interpreter);
+                } else {
+                    Self::rational(NAN)
+                }
+            }
             Self::String(ref str) => Self::rational(match f64::from_str(str) {
                 Ok(num) => -num,
                 Err(_) => NAN,

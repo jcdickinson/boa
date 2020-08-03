@@ -85,6 +85,7 @@ pub(crate) fn log_string_from(x: &Value, print_internals: bool, print_children: 
                         format!("Number {{ {} }}", buffer.format(rational))
                     }
                 }
+                ObjectData::Date(date) => format!("Date {{ {} }}", date),
                 ObjectData::Array => {
                     let len = i32::from(
                         &v.borrow()
@@ -241,13 +242,7 @@ impl Display for Value {
             Self::Object(_) => write!(f, "{}", log_string_from(self, true, true)),
             Self::Integer(v) => write!(f, "{}", v),
             Self::BigInt(ref num) => write!(f, "{}n", num),
-            Self::Date(ref date) => write!(
-                f,
-                "{}",
-                date.to_local()
-                    .map(|f| f.to_rfc3339())
-                    .unwrap_or_else(|| "Invalid Date".to_string())
-            ),
+            Self::Date(ref date) => write!(f, "\"{}\"", date.to_json_string()),
         }
     }
 }

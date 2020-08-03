@@ -266,6 +266,8 @@ impl Value {
                         }
                     }
                     Ok(JSONValue::Array(arr))
+                } else if let Ok(value) = Value::try_from(obj.borrow().data.clone()) {
+                    value.to_json(interpreter)
                 } else {
                     let mut new_obj = Map::new();
                     for k in obj.borrow().properties().keys() {
